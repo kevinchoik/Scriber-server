@@ -55,7 +55,6 @@ io.on('connection', socket => {
 	});
 
 	socket.on('translate', ({ messages, language }) => {
-		console.log(messages, language);
 		if (language !== 'en') {
 			guestLangs[socket.id] = language;
 		} else {
@@ -66,6 +65,7 @@ io.on('connection', socket => {
 		const returnArr = messages.map(async msg => {
 			return (await translate(msg, language))[0];
 		});
+		console.log(returnArr);
 		socket.emit('translate', returnArr);
 	});
 });
