@@ -42,8 +42,9 @@ io.on('connection', socket => {
         // if (guestLangs.hasOwnProperty(socket.id)) {
         //     msg = await translate(msg, guestLangs[socket.id]);
         // }
-        // msg = await translate(msg, 'ru')[0];
-        // console.log(msg)
+        msg = await translate(msg, 'ru');
+        msg = msg[0];
+        console.log(msg)
 		io.to(currRoom).emit('newMsg', msg);
 	});
 
