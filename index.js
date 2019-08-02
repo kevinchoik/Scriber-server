@@ -3,10 +3,19 @@ const app = express();
 const morgan = require('morgan');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const translate = require('./translate');
 
 app.use(morgan('tiny'));
 
+let guestLangs = {};
+
 io.on('connection', socket => {
+    socket.on('disconnect', () => {
+        if (guestLangs.hasOwnProperty(socket.id)) {
+            delete guestLangs[socket.id];
+        }
+    });
+
 	socket.on('makeRoom', roomId => {
 		const room = io.sockets.adapter.rooms[roomId];
 		if (room && room.length) {
@@ -27,9 +36,13 @@ io.on('connection', socket => {
 		}
 	});
 
-	socket.on('newMsg', msg => {
+	socket.on('newMsg', async msg => {
 		const rooms = Object.keys(socket.rooms);
-		const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
+        const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
+        // if (guestLangs.hasOwnProperty(socket.id)) {
+        //     msg = await translate(msg, guestLangs[socket.id]);
+        // }
+        msg = await translate(msg, 'ru');
 		io.to(currRoom).emit('newMsg', msg);
 	});
 
@@ -40,7 +53,11 @@ io.on('connection', socket => {
 				socket.leave(room);
 			}
 		}
-	});
+    });
+    
+    // socket.on('translate', msgArr => {
+
+    // })
 });
 
 const port = process.env.PORT || 3000;
