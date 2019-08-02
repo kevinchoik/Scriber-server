@@ -24,8 +24,8 @@ app.post('/image', (req, res) => {
 	console.log(req.files);
 	const dest = 'image' + Date.now().toString() + '.jpg';
 	console.log(dest);
-	console.log(path.join('img/', dest));
-	req.files.image.mv(path.join('img/', dest), err => {
+	console.log(path.join(__dirname, 'img/', dest));
+	req.files.image.mv(path.join(__dirname, 'img/', dest), err => {
 		if (err) {
 			console.log(err);
 		} else {
