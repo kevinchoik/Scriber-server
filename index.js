@@ -54,9 +54,8 @@ io.on('connection', socket => {
 		}
 	});
 
-	socket.on('translate', data => {
-		console.log(data);
-		const { messages, language } = data;
+	socket.on('translate', ({ messages, language }) => {
+		console.log(messages, language);
 		if (language !== 'en') {
 			guestLangs[socket.id] = language;
 		} else {
