@@ -42,8 +42,10 @@ io.on('connection', socket => {
 		const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
 		const clients = io.sockets.adapter.rooms[currRoom].sockets;
 		console.log('a', clients);
+		const origMsg = msg;
 		for (let clientId in clients) {
-			console.log('b', clientId);
+			msg = origMsg;
+			console.log('b', clientId, 'c', origMsg);
 			if (guestLangs.hasOwnProperty(clientId)) {
 				msg = (await translate(msg, guestLangs[clientId]))[0];
 				console.log('hi');
