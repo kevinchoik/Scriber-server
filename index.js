@@ -28,13 +28,15 @@ const upload = multer({
 	})
 });
 
+const BACKEND = 'https://obscure-basin-81956.herokuapp.com/';
+
 app.post('/image', req => {
 	const dest = 'image' + Date.now().toString() + '.jpeg';
 	req.files.image.mv(path.join('img/', dest), err => {
 		if (err) {
 			console.log(err);
 		} else {
-			const imageUri = '/' + dest;
+			const imageUri = BACKEND + dest;
 			const currId = req.body.id;
 			const currSocket = io.sockets.connected[currId];
 			const rooms = Object.keys(currSocket.rooms);
