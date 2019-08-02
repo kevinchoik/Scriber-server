@@ -37,15 +37,12 @@ io.on('connection', socket => {
 	});
 
 	socket.on('newMsg', async msg => {
-		console.log('a', guestLangs, socket.id);
 		const rooms = Object.keys(socket.rooms);
 		const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
 		const clients = io.sockets.adapter.rooms[currRoom].sockets;
-		console.log('a', clients);
 		const origMsg = msg;
 		for (let clientId in clients) {
 			msg = origMsg;
-			console.log('b', clientId, 'c', origMsg);
 			if (guestLangs.hasOwnProperty(clientId)) {
 				msg = (await translate(msg, guestLangs[clientId]))[0];
 				console.log('hi');
@@ -71,12 +68,25 @@ io.on('connection', socket => {
 				delete guestLangs[socket.id];
 			}
 		}
-		console.log('b', guestLangs, socket.id);
 		let returnArr = [];
 		for (let i = 0; i < messages.length; i++) {
 			returnArr.push((await translate(messages[i], language))[0]);
 		}
 		socket.emit('translate', returnArr);
+	});
+
+	socket.on('editMsg', async ({ message, index }) => {
+		const rooms = Object.keys(socket.rooms);
+		const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
+		const clients = io.sockets.adapter.rooms[currRoom].sockets;
+		const origMsg = message;
+		for (let clientId in clients) {
+			message = origMsg;
+			if (guestLangs.hasOwnProperty(clientId)) {
+				message = (await translate(message, guestLangs[clientId]))[0];
+			}
+			io.sockets.connected[clientId].emit('editMsg', { message, index });
+		}
 	});
 });
 
