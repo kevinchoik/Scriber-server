@@ -1,11 +1,40 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const translate = require('./translate');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const aws = new require('aws-sdk');
+const s3 = new aws.S3();
 
 app.use(morgan('tiny'));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+const upload = multer({
+	storage: multerS3({
+		s3: s3,
+		bucket: 'horizons-demo',
+		key: function(req, file, cb) {
+			cb(null, Date.now().toString());
+		}
+	})
+});
+
+app.post('/image', upload.single('image'), req => {
+	const currId = req.body.id;
+	console.log(currId);
+	const imageUri = req.file.location;
+	console.log(imageUri);
+	const currSocket = io.sockets.connected[currId];
+	console.log(currSocket);
+	const rooms = Object.keys(currSocket.rooms);
+	const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
+	io.to(currRoom).emit('newMsg', { uri: imageUri });
+});
 
 let guestLangs = {};
 
