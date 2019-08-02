@@ -54,19 +54,19 @@ io.on('connection', socket => {
 		}
 	});
 
-	socket.on('translate', async (msgArr, lang) => {
-        if (lang !== 'en') {
-            guestLangs[socket.id] = lang;
-        } else {
-            if (guestLangs.hasOwnProperty(socket.id)) {
-                delete guestLangs[socket.id];
-            }
-        }
-        const returnArr = msgArr.map(msg => {
-            return (await translate(msg, lang))[0];
-        })
-        socket.emit('translate', returnArr);
-    });
+	socket.on('translate', (msgArr, lang) => {
+		if (lang !== 'en') {
+			guestLangs[socket.id] = lang;
+		} else {
+			if (guestLangs.hasOwnProperty(socket.id)) {
+				delete guestLangs[socket.id];
+			}
+		}
+		const returnArr = msgArr.map(async msg => {
+			return (await translate(msg, lang))[0];
+		});
+		socket.emit('translate', returnArr);
+	});
 });
 
 const port = process.env.PORT || 3000;
