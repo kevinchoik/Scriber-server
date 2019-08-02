@@ -1,0 +1,20 @@
+{
+	"name": "scriber-server",
+	"version": "1.0.0",
+	"description": "Server for Scriber",
+	"main": "index.js",
+	"scripts": {
+		"test": "nodemon index"
+	},
+	"author": "Kevin Choi",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.17.1",
+		"http": "0.0.0",
+		"morgan": "^1.9.1",
+		"socket.io": "^2.2.0"
+	},
+	"devDependencies": {
+		"nodemon": "^1.19.1"
+	}
+}
