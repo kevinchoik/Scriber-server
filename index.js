@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const translate = require('./translate');
@@ -11,8 +11,8 @@ const aws = new require('aws-sdk');
 const s3 = new aws.S3();
 
 app.use(morgan('tiny'));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
 
 const upload = multer({
 	storage: multerS3({
