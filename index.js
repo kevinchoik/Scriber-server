@@ -43,7 +43,7 @@ io.on('connection', socket => {
         //     msg = await translate(msg, guestLangs[socket.id]);
         // }
         msg = await translate(msg, 'ru');
-        console.log(msg);
+        console.log(msg, msg[0], msg[1].data.translations);
 		io.to(currRoom).emit('newMsg', msg);
 	});
 
