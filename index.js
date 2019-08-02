@@ -18,24 +18,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'img')));
 
-const BACKEND = 'https://obscure-basin-81956.herokuapp.com/';
+// const BACKEND = 'https://obscure-basin-81956.herokuapp.com/';
+const BACKEND = 'http://192.168.1.88:3000/';
 
 app.post('/image', (req, res) => {
-	console.log(req.files);
 	const dest = 'image' + Date.now().toString() + '.jpg';
-	console.log(dest);
-	console.log(path.join(__dirname, 'img/', dest));
 	req.files.image.mv(path.join(__dirname, 'img/', dest), err => {
 		if (err) {
 			console.log(err);
 		} else {
-			console.log('pass until here');
 			const imageUri = BACKEND + dest;
 			const currId = req.body.id;
 			const currSocket = io.sockets.connected[currId];
-			console.log(currSocket);
 			const rooms = Object.keys(currSocket.rooms);
-			const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
+			const currRoom = rooms[0] === currId ? rooms[1] : rooms[0];
 			res.json({ message: 'Success' });
 			io.to(currRoom).emit('newMsg', { uri: imageUri });
 		}
@@ -114,7 +110,11 @@ io.on('connection', socket => {
 		}
 		let returnArr = [];
 		for (let i = 0; i < messages.length; i++) {
-			returnArr.push((await translate(messages[i], language))[0]);
+			if (typeof messages[i] === 'string') {
+				returnArr.push((await translate(messages[i], language))[0]);
+			} else {
+				returnArr.push(messages[i]);
+			}
 		}
 		socket.emit('translate', returnArr);
 	});

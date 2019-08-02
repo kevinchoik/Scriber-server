@@ -63,3 +63,6 @@ env.sh
 
 # .DS_Store file
 .DS_Store
+
+# Image folder
+img/
