@@ -4,7 +4,8 @@
 	"description": "Server for Scriber",
 	"main": "index.js",
 	"scripts": {
-		"test": "nodemon index"
+		"start": "node index",
+		"dev": "nodemon index"
 	},
 	"author": "Kevin Choi",
 	"license": "ISC",
