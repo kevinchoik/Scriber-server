@@ -24,7 +24,7 @@ const upload = multer({
 	})
 });
 
-app.post('/image', upload.single('image'), req => {
+server.post('/image', upload.single('image'), req => {
 	console.log('a');
 	const currId = req.body.id;
 	console.log(currId);
