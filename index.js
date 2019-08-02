@@ -5,10 +5,10 @@ const bodyParser = require('body-parser');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const translate = require('./translate');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
-const aws = new require('aws-sdk');
-const s3 = new aws.S3();
+// const multer = require('multer');
+// const multerS3 = require('multer-s3');
+// const aws = new require('aws-sdk');
+// const s3 = new aws.S3();
 const fileupload = require('express-fileupload');
 const path = require('path');
 
@@ -18,20 +18,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'img')));
 
-const upload = multer({
-	storage: multerS3({
-		s3: s3,
-		bucket: 'scriber',
-		key: function(req, file, cb) {
-			cb(null, Date.now().toString());
-		}
-	})
-});
-
 const BACKEND = 'https://obscure-basin-81956.herokuapp.com/';
 
-app.post('/image', req => {
-	const dest = 'image' + Date.now().toString() + '.jpeg';
+app.post('/image', (req, res) => {
+	const dest = 'image' + Date.now().toString() + '.jpg';
 	req.files.image.mv(path.join('img/', dest), err => {
 		if (err) {
 			console.log(err);
@@ -41,6 +31,7 @@ app.post('/image', req => {
 			const currSocket = io.sockets.connected[currId];
 			const rooms = Object.keys(currSocket.rooms);
 			const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
+			res.json({ message: 'Success' });
 			io.to(currRoom).emit('newMsg', { uri: imageUri });
 		}
 	});
