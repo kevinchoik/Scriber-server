@@ -21,14 +21,19 @@ app.use(express.static(path.join(__dirname, 'img')));
 const BACKEND = 'https://obscure-basin-81956.herokuapp.com/';
 
 app.post('/image', (req, res) => {
+	console.log(req.files);
 	const dest = 'image' + Date.now().toString() + '.jpg';
+	console.log(dest);
+	console.log(path.join('img/', dest));
 	req.files.image.mv(path.join('img/', dest), err => {
 		if (err) {
 			console.log(err);
 		} else {
+			console.log('pass until here');
 			const imageUri = BACKEND + dest;
 			const currId = req.body.id;
 			const currSocket = io.sockets.connected[currId];
+			console.log(currSocket);
 			const rooms = Object.keys(currSocket.rooms);
 			const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
 			res.json({ message: 'Success' });
