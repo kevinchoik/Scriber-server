@@ -37,13 +37,19 @@ io.on('connection', socket => {
 	});
 
 	socket.on('newMsg', async msg => {
-		console.log('a', guestLangs);
+		console.log('a', guestLangs, socket.id);
 		const rooms = Object.keys(socket.rooms);
 		const currRoom = rooms[0] === socket.id ? rooms[1] : rooms[0];
-		if (guestLangs.hasOwnProperty(socket.id)) {
-			msg = (await translate(msg, guestLangs[socket.id]))[0];
+		const clients = io.sockets.adapter.rooms[currRoom].sockets;
+		console.log('a', clients);
+		for (let clientId in clients) {
+			console.log('b', clientId);
+			if (guestLangs.hasOwnProperty(clientId)) {
+				msg = (await translate(msg, guestLangs[clientId]))[0];
+				console.log('hi');
+			}
+			clients[clientId].emit('newMsg', msg);
 		}
-		io.to(currRoom).emit('newMsg', msg);
 	});
 
 	socket.on('removeMyRooms', () => {
@@ -63,7 +69,7 @@ io.on('connection', socket => {
 				delete guestLangs[socket.id];
 			}
 		}
-		console.log('b', guestLangs);
+		console.log('b', guestLangs, socket.id);
 		let returnArr = [];
 		for (let i = 0; i < messages.length; i++) {
 			returnArr.push((await translate(messages[i], language))[0]);
