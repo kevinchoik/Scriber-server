@@ -48,7 +48,7 @@ io.on('connection', socket => {
 				msg = (await translate(msg, guestLangs[clientId]))[0];
 				console.log('hi');
 			}
-			clients[clientId].emit('newMsg', msg);
+			io.sockets.connected[clientId].emit('newMsg', msg);
 		}
 	});
 
