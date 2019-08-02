@@ -25,6 +25,7 @@ const upload = multer({
 });
 
 app.post('/image', upload.single('image'), req => {
+	console.log('a');
 	const currId = req.body.id;
 	console.log(currId);
 	const imageUri = req.file.location;
