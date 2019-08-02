@@ -54,16 +54,16 @@ io.on('connection', socket => {
 		}
 	});
 
-	socket.on('translate', (msgArr, lang) => {
-		if (lang !== 'en') {
-			guestLangs[socket.id] = lang;
+	socket.on('translate', ({ messages, language }) => {
+		if (language !== 'en') {
+			guestLangs[socket.id] = language;
 		} else {
 			if (guestLangs.hasOwnProperty(socket.id)) {
 				delete guestLangs[socket.id];
 			}
 		}
-		const returnArr = msgArr.map(async msg => {
-			return (await translate(msg, lang))[0];
+		const returnArr = messages.map(async msg => {
+			return (await translate(msg, language))[0];
 		});
 		socket.emit('translate', returnArr);
 	});
